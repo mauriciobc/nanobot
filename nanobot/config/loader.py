@@ -20,7 +20,10 @@ def get_data_dir() -> Path:
 
 def load_config(config_path: Path | None = None) -> Config:
     """
-    Load configuration from file or create default.
+    Load configuration from file and environment variables.
+    
+    Environment variables (NANOBOT_*) override file values.
+    Priority: env vars > config file > defaults.
     
     Args:
         config_path: Optional path to config file. Uses default if not provided.
@@ -29,17 +32,23 @@ def load_config(config_path: Path | None = None) -> Config:
         Loaded configuration object.
     """
     path = config_path or get_config_path()
-    
+    file_data: dict[str, Any] = {}
+
     if path.exists():
         try:
             with open(path) as f:
-                data = json.load(f)
-            return Config.model_validate(convert_keys(data))
+                file_data = convert_keys(json.load(f))
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Warning: Failed to load config from {path}: {e}")
             print("Using default configuration.")
-    
-    return Config()
+
+    # Config() loads from env; **file_data provides defaults for fields not in env.
+    # Pydantic-settings: init kwargs are used first, then env. We want env to win.
+    # So we exclude top-level keys that have env var equivalents (env overrides file).
+    env_override_sections = {"channels", "providers"}
+    init_data = {k: v for k, v in file_data.items() if k not in env_override_sections}
+
+    return Config(**init_data)
 
 
 def save_config(config: Config, config_path: Path | None = None) -> None:
