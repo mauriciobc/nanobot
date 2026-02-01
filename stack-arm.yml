@@ -1,0 +1,30 @@
+# nanobot - Stack para Portainer em hosts ARM
+# Para armv7l (Raspberry Pi 2/3, rk322x, etc): use mauriciobcastro/nanobot:arm32v7
+# Para arm64 (Raspberry Pi 4, etc): use mauriciobcastro/nanobot:arm64
+#
+# Deploy: Portainer → Stacks → Web editor → cole este YAML
+#
+# OBRIGATÓRIO: Adicione sua OpenRouter API key (https://openrouter.ai/keys)
+#   Opção A: env var abaixo — troque SUA_CHAVE_AQUI pela chave real
+#   Opção B: na UI do Portainer → Environment variables do stack
+
+services:
+  nanobot:
+    image: mauriciobcastro/nanobot:arm32v7
+    ports:
+      - "18789:18789"
+      - "2222:22"   # SSH: ssh root@HOST -p 2222
+    volumes:
+      - nanobot-data:/root/.nanobot
+    environment:
+      - NANOBOT_PROVIDERS__OPENROUTER__API_KEY=${OPENROUTER_API_KEY}
+      # Telegram
+      - NANOBOT_CHANNELS__TELEGRAM__ENABLED=${NANOBOT_CHANNELS__TELEGRAM__ENABLED:-true}
+      - NANOBOT_CHANNELS__TELEGRAM__TOKEN=${NANOBOT_CHANNELS__TELEGRAM__TOKEN}
+      - NANOBOT_CHANNELS__TELEGRAM__ALLOW_FROM=${NANOBOT_CHANNELS__TELEGRAM__ALLOW_FROM:-[]}
+      # SSH: defina para habilitar login por senha (ex: changeme)
+      - SSH_ROOT_PASSWORD=${SSH_ROOT_PASSWORD:-}
+    restart: unless-stopped
+
+volumes:
+  nanobot-data:

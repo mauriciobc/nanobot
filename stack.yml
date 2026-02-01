@@ -14,6 +14,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "18789:18789"
+      - "2222:22"   # SSH: ssh root@HOST -p 2222
     volumes:
       - nanobot-data:/root/.nanobot
       # Opcional: monte um host path para editar config facilmente
