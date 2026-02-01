@@ -1,0 +1,27 @@
+# nanobot - Gateway principal (Telegram, agent, cron)
+# Uso: docker compose up -d
+# Pré-requisito: configure ~/.nanobot/config.json (ou monte seu config)
+services:
+  nanobot:
+    build: .
+    ports:
+      - "18789:18789"
+    volumes:
+      - nanobot-data:/root/.nanobot
+    restart: unless-stopped
+
+  # Bridge WhatsApp (opcional) - descomente para usar WhatsApp
+  # Requer: channels.whatsapp.bridge_url = "ws://bridge:3001" no config
+  # bridge:
+  #   build:
+  #     context: ./bridge
+  #     dockerfile: Dockerfile
+  #   user: root
+  #   volumes:
+  #     - nanobot-data:/root/.nanobot
+  #   environment:
+  #     - BRIDGE_PORT=3001
+  #     - AUTH_DIR=/root/.nanobot/whatsapp-auth
+
+volumes:
+  nanobot-data:

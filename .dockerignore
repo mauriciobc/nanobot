@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.venv
+venv
+.env
+.pytest_cache
+.coverage
+htmlcov
+*.egg-info
+*.egg
+dist/
+build/
+
+# Node (bridge dev)
+bridge/node_modules
+bridge/dist
+
+# IDE e misc
+.assets
+
+# Case/assets (não necessários para runtime)
+case/

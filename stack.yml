@@ -1,0 +1,37 @@
+# nanobot - Stack para Portainer
+# Deploy: Portainer → Stacks → Add stack → Web editor (cole o YAML)
+# Ou: Deploy from Git → repo URL → Compose path: stack.yml
+#
+# Pré-requisito: após deploy, rode onboard (troque NOME_DO_STACK pelo nome do stack)
+#   docker run --rm -v NOME_DO_STACK_nanobot-data:/root/.nanobot nanobot onboard
+#   Ex: stack "nanobot" → nanobot_nanobot-data
+
+services:
+  nanobot:
+    image: nanobot:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "18789:18789"
+    volumes:
+      - nanobot-data:/root/.nanobot
+      # Opcional: monte um host path para editar config facilmente
+      # - /caminho/no/host/nanobot:/root/.nanobot
+    restart: unless-stopped
+
+  # Descomente para WhatsApp (adicione bridge_url: "ws://bridge:3001" no config)
+  # bridge:
+  #   build:
+  #     context: ./bridge
+  #     dockerfile: Dockerfile
+  #   user: root
+  #   volumes:
+  #     - nanobot-data:/root/.nanobot
+  #   environment:
+  #     - BRIDGE_PORT=3001
+  #     - AUTH_DIR=/root/.nanobot/whatsapp-auth
+  #   restart: unless-stopped
+
+volumes:
+  nanobot-data:

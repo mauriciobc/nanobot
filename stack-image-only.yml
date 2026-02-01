@@ -1,0 +1,19 @@
+# nanobot - Stack image-only para Portainer Web editor
+# Usa imagem pré-construída (sem build).
+#
+# Pré-requisitos:
+# 1. Imagem no host do Portainer: docker build -t nanobot:latest .
+#    (Se Portainer em host remoto: fazer build no host ou push para registry)
+# 2. Após deploy, rode onboard: docker run --rm -v nanobot_nanobot-data:/root/.nanobot nanobot onboard
+
+services:
+  nanobot:
+    image: nanobot:latest
+    ports:
+      - "18789:18789"
+    volumes:
+      - nanobot-data:/root/.nanobot
+    restart: unless-stopped
+
+volumes:
+  nanobot-data:
